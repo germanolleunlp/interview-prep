@@ -1,0 +1,1338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cyngn Interview Prep</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0f172a; --surface: #1e293b; --surface2: #273549;
+    --border: #334155; --accent: #3b82f6; --green: #10b981;
+    --yellow: #f59e0b; --red: #ef4444; --text: #f1f5f9;
+    --muted: #94a3b8; --code-bg: #0d1b2a;
+  }
+  html, body { height: 100%; font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); font-size: 15px; }
+  a { color: var(--accent); text-decoration: none; }
+  code, pre { font-family: 'Courier New', 'Consolas', monospace; }
+
+  /* Layout */
+  #app { display: flex; height: 100vh; overflow: hidden; }
+  #sidebar { width: 240px; min-width: 240px; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow-y: auto; }
+  #main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  #header { padding: 16px 24px; border-bottom: 1px solid var(--border); background: var(--surface); display: flex; align-items: center; justify-content: space-between; }
+  #content { flex: 1; overflow-y: auto; padding: 24px; }
+
+  /* Sidebar */
+  .sidebar-logo { padding: 20px 16px 12px; border-bottom: 1px solid var(--border); }
+  .sidebar-logo h1 { font-size: 14px; font-weight: 700; color: var(--accent); letter-spacing: 0.05em; text-transform: uppercase; }
+  .sidebar-logo p { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .sidebar-section { padding: 12px 8px 4px; font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 16px; cursor: pointer; border-radius: 6px; margin: 1px 8px; font-size: 13px; color: var(--muted); transition: all 0.15s; }
+  .nav-item:hover { background: var(--surface2); color: var(--text); }
+  .nav-item.active { background: rgba(59,130,246,0.15); color: var(--accent); }
+  .nav-item .icon { font-size: 16px; min-width: 20px; text-align: center; }
+  .nav-item .badge { margin-left: auto; font-size: 10px; background: var(--surface2); padding: 2px 6px; border-radius: 10px; color: var(--muted); }
+  .nav-item.active .badge { background: rgba(59,130,246,0.2); color: var(--accent); }
+  .nav-sub { padding-left: 20px; }
+  .nav-sub .nav-item { font-size: 12px; padding: 7px 12px; }
+
+  /* Header */
+  #header h2 { font-size: 18px; font-weight: 600; }
+  #header .subtitle { font-size: 12px; color: var(--muted); }
+  .progress-container { display: flex; align-items: center; gap: 10px; }
+  .progress-bar { width: 160px; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--green); border-radius: 3px; transition: width 0.3s; }
+  .progress-text { font-size: 12px; color: var(--muted); }
+
+  /* Tabs */
+  .tabs { display: flex; gap: 4px; margin-bottom: 24px; border-bottom: 1px solid var(--border); padding-bottom: 0; }
+  .tab-btn { padding: 10px 20px; cursor: pointer; font-size: 13px; color: var(--muted); border-bottom: 2px solid transparent; margin-bottom: -1px; background: none; border-top: none; border-left: none; border-right: none; transition: all 0.15s; }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .tab-pane { display: none; }
+  .tab-pane.active { display: block; }
+
+  /* Cards */
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 16px; }
+  .card h3 { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .card h3 .tag { font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .tag-core { background: rgba(59,130,246,0.15); color: var(--accent); }
+  .tag-pattern { background: rgba(239,68,68,0.15); color: var(--red); }
+  .tag-tip { background: rgba(16,185,129,0.15); color: var(--green); }
+  .tag-warn { background: rgba(245,158,11,0.15); color: var(--yellow); }
+  .card p { color: var(--muted); line-height: 1.7; font-size: 14px; }
+  .card p + p { margin-top: 8px; }
+  .card ul, .card ol { padding-left: 20px; color: var(--muted); line-height: 1.8; font-size: 14px; }
+  .card li { margin-bottom: 4px; }
+  .card strong { color: var(--text); }
+
+  /* Code blocks */
+  pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px; padding: 16px; overflow-x: auto; margin: 12px 0; font-size: 13px; line-height: 1.6; }
+  .kw { color: #c792ea; } .fn { color: #82aaff; } .st { color: #c3e88d; } .cm { color: #546e7a; font-style: italic; } .num { color: #f78c6c; } .cls { color: #ffcb6b; }
+
+  /* Flashcards */
+  .flashcard { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 12px; }
+  .flashcard-q { font-size: 14px; color: var(--text); font-weight: 500; cursor: pointer; display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+  .flashcard-q .reveal-btn { flex-shrink: 0; font-size: 11px; padding: 4px 10px; border: 1px solid var(--border); border-radius: 4px; color: var(--muted); background: none; cursor: pointer; white-space: nowrap; transition: all 0.15s; }
+  .flashcard-q .reveal-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .flashcard-a { display: none; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
+  .flashcard-a.visible { display: block; }
+  .flashcard-a p { color: var(--muted); font-size: 13px; line-height: 1.7; }
+  .flashcard-a pre { font-size: 12px; }
+  .flashcard-rating { display: flex; gap: 8px; margin-top: 10px; }
+  .rating-btn { flex: 1; padding: 6px; border: 1px solid var(--border); border-radius: 6px; cursor: pointer; font-size: 12px; background: none; color: var(--muted); transition: all 0.15s; }
+  .rating-btn:hover { background: var(--surface2); }
+  .rating-btn.good { border-color: var(--green); color: var(--green); }
+  .rating-btn.ok { border-color: var(--yellow); color: var(--yellow); }
+  .rating-btn.bad { border-color: var(--red); color: var(--red); }
+  .fc-progress { font-size: 11px; color: var(--muted); margin-bottom: 16px; }
+
+  /* Mock interview */
+  .mock-q { background: var(--surface); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; padding: 16px 20px; margin-bottom: 16px; }
+  .mock-q .interviewer { font-size: 11px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; margin-bottom: 6px; }
+  .mock-q .question { font-size: 14px; line-height: 1.6; }
+  .answer-reveal { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin-top: 12px; display: none; }
+  .answer-reveal.visible { display: block; }
+  .answer-reveal h4 { font-size: 12px; color: var(--green); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; }
+  .show-answer-btn { padding: 8px 16px; background: none; border: 1px solid var(--accent); color: var(--accent); border-radius: 6px; cursor: pointer; font-size: 13px; transition: all 0.15s; }
+  .show-answer-btn:hover { background: rgba(59,130,246,0.1); }
+
+  /* Home */
+  .home-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+  .module-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; cursor: pointer; transition: all 0.2s; }
+  .module-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .module-card .mc-icon { font-size: 28px; margin-bottom: 12px; }
+  .module-card h3 { font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+  .module-card p { font-size: 12px; color: var(--muted); line-height: 1.5; }
+  .module-card .mc-progress { margin-top: 12px; }
+  .module-card .mc-progress .bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .module-card .mc-progress .fill { height: 100%; background: var(--green); border-radius: 2px; }
+  .module-card .mc-progress span { font-size: 11px; color: var(--muted); display: block; margin-top: 4px; }
+
+  /* Alert / callout */
+  .callout { border-radius: 8px; padding: 14px 16px; margin: 12px 0; font-size: 13px; line-height: 1.6; }
+  .callout-red { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.3); color: #fca5a5; }
+  .callout-blue { background: rgba(59,130,246,0.08); border: 1px solid rgba(59,130,246,0.3); color: #93c5fd; }
+  .callout-green { background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.3); color: #6ee7b7; }
+  .callout-yellow { background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.3); color: #fcd34d; }
+  .callout strong { color: inherit; }
+
+  /* Score table */
+  .score-table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 12px 0; }
+  .score-table th { text-align: left; padding: 8px 12px; color: var(--muted); font-weight: 600; font-size: 11px; text-transform: uppercase; border-bottom: 1px solid var(--border); }
+  .score-table td { padding: 10px 12px; border-bottom: 1px solid rgba(51,65,85,0.5); color: var(--muted); }
+  .score-table tr:last-child td { border-bottom: none; }
+  .score-table .level-acc { color: var(--yellow); } .score-table .level-str { color: var(--accent); } .score-table .level-exc { color: var(--green); }
+
+  /* Section headings */
+  .section-title { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
+  .section-sub { font-size: 13px; color: var(--muted); margin-bottom: 24px; line-height: 1.5; }
+  h4 { font-size: 13px; font-weight: 600; color: var(--text); margin: 14px 0 6px; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  /* Responsive */
+  @media (max-width: 768px) { #sidebar { display: none; } }
+</style>
+</head>
+<body>
+<div id="app">
+  <!-- SIDEBAR -->
+  <nav id="sidebar">
+    <div class="sidebar-logo">
+      <h1>Interview Prep</h1>
+      <p>Cyngn · Python + Systems Design</p>
+    </div>
+    <div class="sidebar-section">Navigation</div>
+    <div class="nav-item active" onclick="navigate('home')" id="nav-home"><span class="icon">🏠</span> Home</div>
+    <div class="nav-item" onclick="navigate('mindset')" id="nav-mindset"><span class="icon">🧠</span> Mindset &amp; Strategy</div>
+    <div class="nav-item" onclick="navigate('python')" id="nav-python"><span class="icon">🐍</span> Python Core</div>
+    <div class="nav-item" onclick="navigate('frameworks')" id="nav-frameworks"><span class="icon">⚡</span> Web Frameworks &amp; ORM</div>
+    <div class="nav-item" onclick="navigate('testing')" id="nav-testing"><span class="icon">🧪</span> Testing</div>
+    <div class="nav-item" onclick="navigate('palindrome')" id="nav-palindrome"><span class="icon">💻</span> Live Coding</div>
+    <div class="nav-item" onclick="navigate('sysdesign')" id="nav-sysdesign"><span class="icon">🏗️</span> Systems Design</div>
+  </nav>
+
+  <!-- MAIN -->
+  <div id="main">
+    <div id="header">
+      <div>
+        <div id="header-title" class="section-title" style="font-size:16px;margin:0">Home</div>
+        <div id="header-sub" class="subtitle">Overview &amp; progress</div>
+      </div>
+      <div class="progress-container">
+        <div class="progress-bar"><div class="progress-fill" id="global-progress" style="width:0%"></div></div>
+        <span class="progress-text" id="global-progress-text">0% complete</span>
+      </div>
+    </div>
+    <div id="content"><!-- dynamic --></div>
+  </div>
+</div>
+
+<script>
+// ─── PROGRESS TRACKING ────────────────────────────────────────────────────
+const TOTAL_CONCEPTS = 48;
+function markSeen(id) {
+  const seen = JSON.parse(localStorage.getItem('seen') || '[]');
+  if (!seen.includes(id)) { seen.push(id); localStorage.setItem('seen', JSON.stringify(seen)); }
+  updateProgress();
+}
+function isSeen(id) { return JSON.parse(localStorage.getItem('seen') || '[]').includes(id); }
+function updateProgress() {
+  const seen = JSON.parse(localStorage.getItem('seen') || '[]').length;
+  const pct = Math.round((seen / TOTAL_CONCEPTS) * 100);
+  document.getElementById('global-progress').style.width = pct + '%';
+  document.getElementById('global-progress-text').textContent = pct + '% complete';
+}
+updateProgress();
+
+// ─── NAVIGATION ───────────────────────────────────────────────────────────
+const MODULES = {
+  home: { title: 'Home', sub: 'Overview & progress', render: renderHome },
+  mindset: { title: 'Mindset & Strategy', sub: 'How Cyngn interviews · What gets candidates rejected', render: renderMindset },
+  python: { title: 'Python Core', sub: 'Generators · Mutable defaults · Shallow vs Deep copy', render: renderPython },
+  frameworks: { title: 'Web Frameworks & ORM', sub: 'FastAPI · Django · N+1 queries · Migrations', render: renderFrameworks },
+  testing: { title: 'Testing', sub: 'Unit vs Integration · pytest-mock · unittest.mock', render: renderTesting },
+  palindrome: { title: 'Live Coding: Palindrome Finder', sub: '60-minute Python challenge · Two approaches · Edge cases', render: renderPalindrome },
+  sysdesign: { title: 'Systems Design: Notification System', sub: '9 sections · FAANG-level bar · Full scoring rubric', render: renderSysdesign },
+};
+let currentModule = 'home';
+function navigate(id) {
+  currentModule = id;
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('nav-' + id)?.classList.add('active');
+  document.getElementById('header-title').textContent = MODULES[id].title;
+  document.getElementById('header-sub').textContent = MODULES[id].sub;
+  document.getElementById('content').innerHTML = '';
+  MODULES[id].render();
+  window.scrollTo(0,0);
+}
+
+// ─── TAB HELPER ───────────────────────────────────────────────────────────
+function renderTabs(tabs, containerId) {
+  const btns = tabs.map((t,i) => `<button class="tab-btn${i===0?' active':''}" onclick="switchTab('${containerId}',${i})">${t.label}</button>`).join('');
+  const panes = tabs.map((t,i) => `<div class="tab-pane${i===0?' active':''}" id="${containerId}-pane-${i}">${t.content}</div>`).join('');
+  return `<div class="tabs">${btns}</div>${panes}`;
+}
+function switchTab(containerId, idx) {
+  const container = document.getElementById(containerId + '-pane-0')?.parentElement?.parentElement;
+  if (!container) return;
+  container.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', i===idx));
+  container.querySelectorAll('.tab-pane').forEach((p,i) => p.classList.toggle('active', i===idx));
+}
+
+// ─── FLASHCARD HELPER ─────────────────────────────────────────────────────
+let fcSeenCount = {};
+function renderFlashcards(cards, prefix) {
+  if (!fcSeenCount[prefix]) fcSeenCount[prefix] = 0;
+  return `<p class="fc-progress">Click "Show Answer" to reveal — rate yourself to track progress.</p>` +
+    cards.map((c, i) => `
+      <div class="flashcard" id="${prefix}-fc-${i}">
+        <div class="flashcard-q">
+          <span>${c.q}</span>
+          <button class="reveal-btn" onclick="revealFC('${prefix}',${i})">Show Answer</button>
+        </div>
+        <div class="flashcard-a" id="${prefix}-fca-${i}">
+          ${c.a}
+          <div class="flashcard-rating">
+            <button class="rating-btn good" onclick="rateFC('${prefix}',${i},'good')">✓ Got it</button>
+            <button class="rating-btn ok" onclick="rateFC('${prefix}',${i},'ok')">~ Partially</button>
+            <button class="rating-btn bad" onclick="rateFC('${prefix}',${i},'bad')">✗ Review again</button>
+          </div>
+        </div>
+      </div>`).join('');
+}
+function revealFC(prefix, i) {
+  const el = document.getElementById(`${prefix}-fca-${i}`);
+  el?.classList.toggle('visible');
+  markSeen(`${prefix}-fc-${i}`);
+}
+function rateFC(prefix, i, rating) {
+  const btns = document.querySelectorAll(`#${prefix}-fc-${i} .rating-btn`);
+  btns.forEach(b => b.style.opacity = '0.4');
+  const btn = document.querySelector(`#${prefix}-fc-${i} .rating-btn.${rating}`);
+  if (btn) btn.style.opacity = '1';
+}
+
+// ─── MOCK INTERVIEW HELPER ────────────────────────────────────────────────
+function renderMock(questions) {
+  return questions.map((q,i) => `
+    <div class="mock-q">
+      <div class="interviewer">🎙 Interviewer</div>
+      <div class="question">${q.q}</div>
+      <div style="margin-top:12px">
+        <button class="show-answer-btn" onclick="showMockAnswer(${i})">Show Model Answer</button>
+      </div>
+      <div class="answer-reveal" id="mock-ans-${i}">
+        <h4>Model Answer</h4>
+        ${q.a}
+      </div>
+    </div>`).join('');
+}
+function showMockAnswer(i) {
+  document.getElementById(`mock-ans-${i}`)?.classList.toggle('visible');
+  markSeen(`mock-ans-${i}`);
+}
+
+// ─── PAGE: HOME ───────────────────────────────────────────────────────────
+function renderHome() {
+  document.getElementById('content').innerHTML = `
+    <h1 class="section-title">Cyngn Interview Prep</h1>
+    <p class="section-sub">Everything you need to pass the technical interview. No external resources required.<br>
+    The interview has 2 parts: <strong>Python Technical (30 min)</strong> + <strong>Systems Design (60 min)</strong>, plus a separate <strong>Live Coding Challenge (60 min)</strong>.</p>
+
+    <div class="callout callout-red">
+      <strong>⚠️ Most Common Rejection Reason (from Cyngn):</strong> Candidates jump into coding without reading the test cases or success criteria first. Before writing a single line of code, always read the spec, identify edge cases, and ask clarifying questions.
+    </div>
+
+    <div style="margin: 24px 0 12px"><strong>Modules</strong></div>
+    <div class="home-grid">
+      ${[
+        {id:'mindset', icon:'🧠', title:'Mindset & Strategy', desc:'Why candidates get rejected · Cyngn\'s interview philosophy · TDD mindset · Anti-patterns', cards:'6 concepts'},
+        {id:'python', icon:'🐍', title:'Python Core', desc:'Generators · Mutable default arguments · Shallow vs Deep copy', cards:'3 concepts'},
+        {id:'frameworks', icon:'⚡', title:'Web Frameworks & ORM', desc:'FastAPI · JWT auth · N+1 queries · Database migrations', cards:'8 concepts'},
+        {id:'testing', icon:'🧪', title:'Testing', desc:'Unit vs Integration · pytest-mock · unittest.mock · What to mock', cards:'5 concepts'},
+        {id:'palindrome', icon:'💻', title:'Live Coding Challenge', desc:'60-min palindrome finder · Expand Around Center · Edge cases · Full solution', cards:'7 concepts'},
+        {id:'sysdesign', icon:'🏗️', title:'Systems Design', desc:'Real-time notification system · 9 sections · Kafka · Scalability · Fault tolerance', cards:'19 concepts'},
+      ].map(m => `
+        <div class="module-card" onclick="navigate('${m.id}')">
+          <div class="mc-icon">${m.icon}</div>
+          <h3>${m.title}</h3>
+          <p>${m.desc}</p>
+          <div class="mc-progress"><div class="bar"><div class="fill" style="width:0%"></div></div><span>${m.cards}</span></div>
+        </div>`).join('')}
+    </div>
+
+    <div style="margin: 32px 0 12px"><strong>Interview Structure</strong></div>
+    <div class="card">
+      <h3>Cyngn Interview Format</h3>
+      <table class="score-table">
+        <tr><th>Session</th><th>Duration</th><th>Topics</th></tr>
+        <tr><td>Live Coding Challenge</td><td>60 min</td><td>Python algorithm (palindrome finder)</td></tr>
+        <tr><td>Python Technical</td><td>30 min</td><td>Python core, web framework, ORM, testing</td></tr>
+        <tr><td>Systems Design</td><td>60 min</td><td>Scalable notification system (9 sections)</td></tr>
+        <tr><td>Behavioral (last 30 min)</td><td>30 min</td><td>Alec Woo joins for cultural fit</td></tr>
+      </table>
+      <div class="callout callout-blue" style="margin-top:12px">
+        <strong>Key rule:</strong> Cyngn lets candidates run <strong>15–30 minutes unguided</strong> before offering any help. This tests your ability to work independently without hand-holding. Silence is NOT them being rude — it's the test.
+      </div>
+    </div>
+  `;
+}
+
+// ─── PAGE: MINDSET ────────────────────────────────────────────────────────
+function renderMindset() {
+  const learn = `
+    <div class="card">
+      <h3>Why Candidates Get Rejected at Cyngn <span class="tag tag-pattern">Rejection Pattern</span></h3>
+      <p>From the internal rejection report, 3 recurring patterns cause candidates to fail:</p>
+      <ol>
+        <li><strong>Not reading specs before coding.</strong> Candidates ignore test cases and success criteria and just start implementing. Alec: "He doesn't look at the test cases, he doesn't know what the success criteria... you go blind hoping things will just work out."</li>
+        <li><strong>Shallow system design.</strong> "Throwing Kafka here, a controller there" without reasoning about why. No systematic thinking — just buzzword-dropping.</li>
+        <li><strong>Ignoring interviewer hints.</strong> When engineers step in to help, strong candidates adapt. Weak candidates ignore the feedback and keep doing what they were doing.</li>
+      </ol>
+    </div>
+
+    <div class="card">
+      <h3>The "Read the Spec First" Protocol <span class="tag tag-tip">Critical Habit</span></h3>
+      <p>This is the single most important behavior Cyngn screens for. Alec's exact quote:</p>
+      <div class="callout callout-blue">"It's not something like tricky or problem solving. That's why we see if someone can read a spec and actually perform the APIs." — Alec Woo</div>
+      <p><strong>The ritual every time you see a coding problem:</strong></p>
+      <ol>
+        <li>Read the problem statement completely before touching the keyboard.</li>
+        <li>Read every test case. Understand what each one is testing.</li>
+        <li>Identify the success criteria: what does "correct" mean?</li>
+        <li>List edge cases out loud: empty input, duplicates, boundary values.</li>
+        <li>Ask clarifying questions (at least 2-3).</li>
+        <li>State your approach in plain English before writing code.</li>
+        <li>THEN start coding.</li>
+      </ol>
+    </div>
+
+    <div class="card">
+      <h3>Cyngn's "Let Them Run" Interview Philosophy <span class="tag tag-core">Interview Style</span></h3>
+      <p>Cyngn's engineering team deliberately gives <strong>minimal guidance for the first 15–30 minutes</strong>. They want to see how you behave when no one is helping you.</p>
+      <p>What this means for you:</p>
+      <ul>
+        <li>Silence from the interviewer is <strong>intentional</strong>. Don't panic or ask for help too early.</li>
+        <li>They're watching: do you structure your thinking? Do you talk through your approach? Do you read the test cases?</li>
+        <li>When hints come, <strong>acknowledge them immediately</strong> and incorporate them. Ignoring hints is an automatic red flag.</li>
+        <li>After 15-30 min of struggle, targeted help will come. This is normal.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>Problem Decomposition Framework <span class="tag tag-core">Core Skill</span></h3>
+      <p>Strong candidates break problems into sub-problems before coding. For any coding problem, identify:</p>
+      <ol>
+        <li><strong>What is the input?</strong> Type, format, constraints, edge cases.</li>
+        <li><strong>What is the output?</strong> Exact format required.</li>
+        <li><strong>What are the sub-problems?</strong> Break it down into 3-4 smaller tasks.</li>
+        <li><strong>What is the algorithm?</strong> State it in plain English.</li>
+        <li><strong>What is the time/space complexity?</strong> Even approximate is fine.</li>
+      </ol>
+      <p>Example for Palindrome Finder: (1) Finding all palindromes, (2) Deduplicating, (3) Sorting by length, (4) Returning top 3.</p>
+    </div>
+
+    <div class="card">
+      <h3>How to Articulate Tradeoffs <span class="tag tag-core">Senior Signal</span></h3>
+      <p>Senior engineers don't just pick a solution — they explain why. For every design decision, say:</p>
+      <ul>
+        <li><strong>"I'm using X because..."</strong> — explain the reason tied to the requirements.</li>
+        <li><strong>"The tradeoff is..."</strong> — acknowledge what you're giving up.</li>
+        <li><strong>"An alternative would be Y, but..."</strong> — show you considered other options.</li>
+      </ul>
+      <div class="callout callout-green">Example: "I'll use Kafka rather than RabbitMQ because we need message replay and long retention — Kafka persists to disk by default. The tradeoff is operational complexity, but since we're on cloud-managed MSK, that's mitigated."</div>
+    </div>
+
+    <div class="card">
+      <h3>Anti-Patterns That Lead to Rejection <span class="tag tag-warn">Watch Out</span></h3>
+      <ul>
+        <li><strong>Silent coding:</strong> Writing code with no explanation. Narrate your thinking at all times.</li>
+        <li><strong>Overconfidence:</strong> "I know exactly what to do" then discovering one problem at a time for 45 minutes.</li>
+        <li><strong>Ignoring hints:</strong> When the interviewer suggests something, stop what you're doing and engage with it.</li>
+        <li><strong>Throwing solutions:</strong> "Let's add Kafka here and a load balancer there" without explaining why or how they connect.</li>
+        <li><strong>Not checking test cases:</strong> Writing code, running tests, seeing failures, and guessing at fixes without reading what the test actually checks.</li>
+        <li><strong>Cannot debug:</strong> When tests fail, inability to trace through the code systematically to find the issue.</li>
+      </ul>
+    </div>
+  `;
+
+  const practice = renderFlashcards([
+    {
+      q: 'What is the #1 reason Cyngn rejects candidates? How do you avoid it?',
+      a: `<p><strong>Reason:</strong> Candidates don't read test cases or success criteria before coding. They start implementing immediately and discover failures one by one.</p>
+          <p><strong>How to avoid:</strong> Before writing a single line of code: (1) Read the entire problem. (2) Read every test case. (3) State what each test is checking. (4) List edge cases. (5) Ask 2-3 clarifying questions. (6) State your approach in plain English. THEN start coding.</p>`
+    },
+    {
+      q: 'What is Cyngn\'s "let them run" philosophy and what does it mean for you as a candidate?',
+      a: `<p>Cyngn engineers give <strong>minimal guidance for the first 15–30 minutes</strong> of the interview. They watch how you behave independently — do you structure your thinking? Do you read specs? Do you narrate your approach?</p>
+          <p>For you: Don't panic at silence. Keep thinking out loud. If you're stuck, say "I'm going to try approach X, though I'm not fully confident" rather than going silent. When hints arrive, immediately acknowledge and incorporate them.</p>`
+    },
+    {
+      q: 'How do you demonstrate a TDD (Test-Driven Development) mindset in a live coding interview?',
+      a: `<p>1. Read all test cases first and say out loud what each one tests.</p>
+          <p>2. Write your function signature based on what the tests expect.</p>
+          <p>3. Pick the simplest test case and make it pass first.</p>
+          <p>4. Expand to handle more complex cases one at a time.</p>
+          <p>5. After each change, explain which test you're targeting and why.</p>
+          <p>Alec's hint: If asked about your background, mention "I'm strong in test-driven development" — it's literally the filter he wants to use.</p>`
+    },
+    {
+      q: 'A candidate says "I\'ll add Kafka here and a load balancer there — that should work." What is wrong with this approach?',
+      a: `<p>This is the "throw solutions at the wall" anti-pattern. The problem:</p>
+          <ul>
+            <li>No systematic reasoning — why Kafka specifically? What problem does it solve here?</li>
+            <li>Components are named without showing how they connect.</li>
+            <li>No tradeoff discussion — what are the downsides?</li>
+            <li>Alec's quote: "It's trying to throw in a solution... things should work." This signals the candidate lacks structured systems thinking.</li>
+          </ul>
+          <p><strong>Instead:</strong> "I'm choosing Kafka because we need durable message storage and replay capability for the notification system. Producers (order service) publish to topics. Consumers (email/SMS workers) subscribe. This decouples producers from consumers and handles traffic spikes via buffering."</p>`
+    },
+    {
+      q: 'What 5 anti-patterns should you avoid in a Cyngn interview?',
+      a: `<ol>
+            <li><strong>Silent coding</strong> — Always narrate your thinking.</li>
+            <li><strong>Jumping to code without reading specs</strong> — Always read test cases first.</li>
+            <li><strong>Overconfidence</strong> — Discover problems systematically, not one at a time for 45 minutes.</li>
+            <li><strong>Ignoring interviewer hints</strong> — When they step in, acknowledge and incorporate their feedback immediately.</li>
+            <li><strong>Buzzword dropping without depth</strong> — Don't name-drop Kafka, consensus algorithms, etc., unless you can explain why and how.</li>
+          </ol>`
+    },
+  ], 'mindset');
+
+  const simulate = renderMock([
+    {
+      q: "Before we start the coding challenge, can you walk me through how you approach a new problem?",
+      a: `<p>Model answer: "Sure. My first step is always to read the problem completely without writing any code. Then I read every test case to understand exactly what success looks like — not what I think success looks like. I identify edge cases: what happens with empty input, duplicates, boundary values? I ask 2-3 clarifying questions before I start. Then I state my approach in plain English: 'I plan to do X because Y.' Once I have that mental model, I start with the simplest case and build up."</p>`
+    },
+    {
+      q: "I notice you started coding. Can you walk me through what the test cases are actually checking?",
+      a: `<p>Model answer: Pause coding immediately. Say: "Good point — let me go back to the tests." Read them aloud. Explain what each one expects. Only then continue. Never say "I think it's checking X" without reading the test.</p>`
+    },
+  ]);
+
+  document.getElementById('content').innerHTML = `
+    <h1 class="section-title">Mindset &amp; Strategy</h1>
+    <p class="section-sub">Understanding how Cyngn interviews works is as important as knowing the technical content.</p>
+    <div id="mindset-tabs">${renderTabs([{label:'Learn',content:learn},{label:'Practice',content:practice},{label:'Simulate',content:simulate}], 'mindset')}</div>
+  `;
+}
+
+// ─── PAGE: PYTHON CORE ────────────────────────────────────────────────────
+function renderPython() {
+  const learn = `
+    <div class="card">
+      <h3>Generators &amp; <code>yield</code> <span class="tag tag-core">Core Concept</span></h3>
+      <p>A generator is a function that uses <code>yield</code> instead of <code>return</code>. When called, it returns a <strong>generator object</strong> — an iterator that produces values <strong>lazily</strong> (one at a time, on demand). The function body is not executed until you start iterating.</p>
+      <h4>Why generators matter:</h4>
+      <ul>
+        <li><strong>Memory efficiency:</strong> You don't load all data into memory at once. Critical for large datasets.</li>
+        <li><strong>Lazy evaluation:</strong> Values are computed only when needed.</li>
+        <li><strong>Pipelines:</strong> You can chain generators for data processing without materializing intermediate lists.</li>
+      </ul>
+      <h4>Practical example in a web service (streaming large query results):</h4>
+<pre><span class="kw">def</span> <span class="fn">stream_users_from_db</span>(db_session, batch_size=<span class="num">1000</span>):
+    <span class="cm"># Instead of: return db_session.query(User).all()  ← loads millions of rows into RAM</span>
+    offset = <span class="num">0</span>
+    <span class="kw">while True</span>:
+        batch = db_session.query(User).offset(offset).limit(batch_size).all()
+        <span class="kw">if not</span> batch:
+            <span class="kw">break</span>
+        <span class="kw">for</span> user <span class="kw">in</span> batch:
+            <span class="kw">yield</span> user  <span class="cm"># yields one user at a time</span>
+        offset += batch_size
+
+<span class="cm"># Usage — processes one user at a time, never all in RAM</span>
+<span class="kw">for</span> user <span class="kw">in</span> <span class="fn">stream_users_from_db</span>(session):
+    <span class="fn">send_email</span>(user)</pre>
+      <h4>Another example — CSV export endpoint:</h4>
+<pre><span class="kw">from</span> flask <span class="kw">import</span> Response, stream_with_context
+
+<span class="kw">def</span> <span class="fn">generate_csv</span>():
+    <span class="kw">yield</span> <span class="st">"name,email\n"</span>
+    <span class="kw">for</span> user <span class="kw">in</span> db.query(User):
+        <span class="kw">yield</span> <span class="st">f"{user.name},{user.email}\n"</span>
+
+<span class="kw">return</span> Response(stream_with_context(<span class="fn">generate_csv</span>()), mimetype=<span class="st">'text/csv'</span>)</pre>
+    </div>
+
+    <div class="card">
+      <h3>Mutable Default Arguments <span class="tag tag-warn">Classic Pitfall</span></h3>
+      <p>In Python, <strong>default argument values are evaluated once at function definition time</strong>, not each time the function is called. If the default is a mutable object (list, dict, set), it is <strong>shared across all calls</strong>.</p>
+      <h4>The bug:</h4>
+<pre><span class="kw">def</span> <span class="fn">add_item</span>(item, items=[]):  <span class="cm"># ← This list is created ONCE</span>
+    items.append(item)
+    <span class="kw">return</span> items
+
+<span class="fn">print</span>(<span class="fn">add_item</span>(<span class="st">"a"</span>))  <span class="cm"># ['a']</span>
+<span class="fn">print</span>(<span class="fn">add_item</span>(<span class="st">"b"</span>))  <span class="cm"># ['a', 'b']  ← Bug! 'a' is still there</span>
+<span class="fn">print</span>(<span class="fn">add_item</span>(<span class="st">"c"</span>))  <span class="cm"># ['a', 'b', 'c']  ← Accumulates across calls</span></pre>
+      <h4>The fix — use <code>None</code> as sentinel:</h4>
+<pre><span class="kw">def</span> <span class="fn">add_item</span>(item, items=<span class="kw">None</span>):
+    <span class="kw">if</span> items <span class="kw">is None</span>:
+        items = []  <span class="cm"># New list created fresh each call</span>
+    items.append(item)
+    <span class="kw">return</span> items
+
+<span class="fn">print</span>(<span class="fn">add_item</span>(<span class="st">"a"</span>))  <span class="cm"># ['a']</span>
+<span class="fn">print</span>(<span class="fn">add_item</span>(<span class="st">"b"</span>))  <span class="cm"># ['b']  ← Clean each time</span></pre>
+      <div class="callout callout-yellow">The same problem applies to mutable dicts: <code>def f(x, d={})</code> — always use <code>d=None</code> and initialize inside.</div>
+    </div>
+
+    <div class="card">
+      <h3>Shallow Copy vs Deep Copy <span class="tag tag-core">Core Concept</span></h3>
+      <p>When you copy a Python object, you need to understand what gets copied.</p>
+      <h4>Assignment (no copy):</h4>
+<pre>a = [[<span class="num">1</span>, <span class="num">2</span>], [<span class="num">3</span>, <span class="num">4</span>]]
+b = a           <span class="cm"># b is the same object as a</span>
+b[<span class="num">0</span>].append(<span class="num">99</span>)
+<span class="fn">print</span>(a)        <span class="cm"># [[1, 2, 99], [3, 4]] — a is modified!</span></pre>
+      <h4>Shallow copy (<code>copy()</code> or <code>list[:]</code> or <code>list()</code>):</h4>
+<pre><span class="kw">import</span> copy
+a = [[<span class="num">1</span>, <span class="num">2</span>], [<span class="num">3</span>, <span class="num">4</span>]]
+b = copy.copy(a)    <span class="cm"># Creates a new container...</span>
+b.append([<span class="num">5</span>, <span class="num">6</span>])
+<span class="fn">print</span>(a)            <span class="cm"># [[1, 2], [3, 4]] — outer list unchanged</span>
+
+b[<span class="num">0</span>].append(<span class="num">99</span>)    <span class="cm"># ...but inner objects are still shared!</span>
+<span class="fn">print</span>(a)            <span class="cm"># [[1, 2, 99], [3, 4]] — a[0] is modified!</span></pre>
+      <h4>Deep copy (<code>deepcopy()</code>):</h4>
+<pre>a = [[<span class="num">1</span>, <span class="num">2</span>], [<span class="num">3</span>, <span class="num">4</span>]]
+b = copy.deepcopy(a)  <span class="cm"># Recursively copies everything</span>
+b[<span class="num">0</span>].append(<span class="num">99</span>)
+<span class="fn">print</span>(a)              <span class="cm"># [[1, 2], [3, 4]] — a is completely untouched</span>
+<span class="fn">print</span>(b)              <span class="cm"># [[1, 2, 99], [3, 4]]</span></pre>
+      <h4>When does it matter?</h4>
+      <ul>
+        <li>When passing mutable nested objects to functions that modify them.</li>
+        <li>When building a history/undo system (you need truly independent snapshots).</li>
+        <li>When working with deeply nested config dicts that must not share references.</li>
+      </ul>
+    </div>
+  `;
+
+  const practice = renderFlashcards([
+    {
+      q: 'What is a Python generator? Why would you use one in a web service instead of a regular function?',
+      a: `<p>A generator is a function with <code>yield</code> instead of <code>return</code>. It produces values <strong>lazily</strong> — one at a time, on demand, without loading everything into memory.</p>
+          <p><strong>In a web service:</strong> Use generators when streaming large query results (millions of rows from DB), generating large CSV exports, or processing data pipelines. Without generators, you'd load all rows into RAM at once. With generators, you yield one row at a time — constant memory usage regardless of dataset size.</p>`
+    },
+    {
+      q: 'What is the danger of <code>def my_func(a, b=[])</code>? How do you fix it?',
+      a: `<p><strong>Danger:</strong> The default list <code>[]</code> is created <em>once</em> at function definition time (not each call). Every call that uses the default shares the same list object. So appending to it accumulates data across calls — a hard-to-spot bug.</p>
+          <p><strong>Fix:</strong></p>
+          <pre><span class="kw">def</span> <span class="fn">my_func</span>(a, b=<span class="kw">None</span>):
+    <span class="kw">if</span> b <span class="kw">is None</span>:
+        b = []  <span class="cm"># Fresh list every call</span></pre>`
+    },
+    {
+      q: 'What is the difference between shallow copy and deep copy? When does shallow copy fail?',
+      a: `<p><strong>Shallow copy</strong> (<code>copy.copy()</code>): Creates a new container, but inner objects are still shared references. Modifying a nested object through the copy will also modify the original.</p>
+          <p><strong>Deep copy</strong> (<code>copy.deepcopy()</code>): Recursively copies everything. No shared references at any level. Completely independent.</p>
+          <p><strong>Shallow copy fails when:</strong> You have nested mutable objects (lists of lists, dicts of dicts) and you need the copy to be truly independent. Example: copying a list of dicts — if you shallow copy, modifying a nested dict modifies the original.</p>`
+    },
+  ], 'python');
+
+  const simulate = renderMock([
+    {
+      q: "What are Python generators, and where would you practically use one in a web service?",
+      a: `<p>A generator uses <code>yield</code> to lazily produce values one at a time, keeping memory constant. In a web service I'd use one for streaming large database query results — instead of <code>query.all()</code> which loads everything, I'd yield rows in batches. Also for CSV export endpoints using Flask's <code>stream_with_context</code>.</p>`
+    },
+    {
+      q: "What's the difference between a shallow copy and a deep copy in Python? When does it matter?",
+      a: `<p>Shallow copy (<code>copy.copy()</code>) creates a new container but shares references to inner objects. Deep copy (<code>copy.deepcopy()</code>) recursively copies everything. It matters when you have nested mutable objects — like a list of dicts — and you need independent copies. In web apps this comes up when you cache config objects or build state snapshots and need to ensure mutations don't bleed across copies.</p>`
+    },
+  ]);
+
+  document.getElementById('content').innerHTML = `
+    <h1 class="section-title">Python Core</h1>
+    <p class="section-sub">8 minutes in the interview. Practical examples count more than theory.</p>
+    <div id="python-tabs">${renderTabs([{label:'Learn',content:learn},{label:'Practice',content:practice},{label:'Simulate',content:simulate}], 'python')}</div>
+  `;
+}
+
+// ─── PAGE: WEB FRAMEWORKS & ORM ───────────────────────────────────────────
+function renderFrameworks() {
+  const learn = `
+    <div class="card">
+      <h3>FastAPI: Pydantic Validation &amp; Dependency Injection <span class="tag tag-core">FastAPI</span></h3>
+      <p><strong>Pydantic models</strong> automatically validate request bodies, query params, and path params. Invalid data raises a 422 response automatically.</p>
+<pre><span class="kw">from</span> fastapi <span class="kw">import</span> FastAPI, Depends
+<span class="kw">from</span> pydantic <span class="kw">import</span> BaseModel, EmailStr
+
+app = FastAPI()
+
+<span class="kw">class</span> <span class="cls">UserCreate</span>(BaseModel):
+    name: str
+    email: EmailStr
+    age: int  <span class="cm"># Pydantic validates: must be int, not None</span>
+
+<span class="kw">@</span>app.post(<span class="st">"/users"</span>)
+<span class="kw">async def</span> <span class="fn">create_user</span>(user: <span class="cls">UserCreate</span>):  <span class="cm"># Pydantic auto-validates</span>
+    <span class="kw">return</span> {<span class="st">"id"</span>: <span class="num">1</span>, <span class="st">"name"</span>: user.name}</pre>
+      <p><strong>Depends</strong> is FastAPI's dependency injection system — it runs a function before your route handler and injects its return value.</p>
+    </div>
+
+    <div class="card">
+      <h3>FastAPI: JWT Authentication <span class="tag tag-core">FastAPI</span></h3>
+<pre><span class="kw">from</span> fastapi.security <span class="kw">import</span> OAuth2PasswordBearer
+<span class="kw">from</span> jose <span class="kw">import</span> jwt, JWTError
+<span class="kw">from</span> fastapi <span class="kw">import</span> Depends, HTTPException, status
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl=<span class="st">"token"</span>)
+SECRET_KEY = <span class="st">"your-secret"</span>
+ALGORITHM = <span class="st">"HS256"</span>
+
+<span class="kw">async def</span> <span class="fn">get_current_user</span>(token: str = Depends(oauth2_scheme)):
+    <span class="kw">try</span>:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        user_id = payload.get(<span class="st">"sub"</span>)
+        <span class="kw">if</span> user_id <span class="kw">is None</span>:
+            <span class="kw">raise</span> HTTPException(status_code=<span class="num">401</span>)
+        <span class="kw">return</span> user_id
+    <span class="kw">except</span> JWTError:
+        <span class="kw">raise</span> HTTPException(status_code=<span class="num">401</span>, detail=<span class="st">"Invalid token"</span>)
+
+<span class="cm"># Protected endpoint:</span>
+<span class="kw">@</span>app.get(<span class="st">"/me"</span>)
+<span class="kw">async def</span> <span class="fn">get_me</span>(user_id: str = Depends(get_current_user)):
+    <span class="kw">return</span> {<span class="st">"user_id"</span>: user_id}</pre>
+      <p><strong>Flow:</strong> Request → <code>OAuth2PasswordBearer</code> extracts token from <code>Authorization: Bearer &lt;token&gt;</code> header → <code>get_current_user</code> decodes JWT → injected into route.</p>
+    </div>
+
+    <div class="card">
+      <h3>The N+1 Query Problem <span class="tag tag-warn">Classic ORM Bug</span></h3>
+      <p>N+1 occurs when you query a list of objects, then for each object, execute an additional query to fetch a related object — resulting in 1 + N database calls instead of 1 join.</p>
+      <h4>The bug (Django ORM with lazy loading):</h4>
+<pre><span class="cm"># 1 query to get all orders</span>
+orders = Order.objects.all()
+
+<span class="kw">for</span> order <span class="kw">in</span> orders:
+    <span class="cm"># N queries — 1 per order to get the user!</span>
+    <span class="fn">print</span>(order.user.name)
+
+<span class="cm"># If there are 1000 orders → 1001 queries. Kills performance.</span></pre>
+      <h4>The fix: <code>select_related</code> (JOIN for FK / OneToOne):</h4>
+<pre><span class="cm"># 1 query with SQL JOIN — fetches User alongside Order</span>
+orders = Order.objects.select_related(<span class="st">'user'</span>).all()
+
+<span class="kw">for</span> order <span class="kw">in</span> orders:
+    <span class="fn">print</span>(order.user.name)  <span class="cm"># No extra query — already loaded</span></pre>
+      <h4>The fix: <code>prefetch_related</code> (separate query for M2M / reverse FK):</h4>
+<pre><span class="cm"># 2 queries total: one for orders, one for all their tags</span>
+orders = Order.objects.prefetch_related(<span class="st">'tags'</span>).all()
+
+<span class="kw">for</span> order <span class="kw">in</span> orders:
+    <span class="fn">print</span>(order.tags.all())  <span class="cm"># No extra queries</span></pre>
+      <div class="callout callout-blue"><strong>Rule:</strong> <code>select_related</code> → ForeignKey or OneToOneField (SQL JOIN). <code>prefetch_related</code> → ManyToManyField or reverse ForeignKey (separate IN query, Python-side joining).</div>
+    </div>
+
+    <div class="card">
+      <h3>Database Migrations in Production <span class="tag tag-warn">Production Risk</span></h3>
+      <p>Migrations modify live database schemas. Done wrong, they cause downtime or data loss.</p>
+      <h4>Tools:</h4>
+      <ul>
+        <li><strong>Django:</strong> <code>python manage.py makemigrations</code> + <code>migrate</code></li>
+        <li><strong>SQLAlchemy:</strong> Alembic (<code>alembic revision --autogenerate</code> + <code>alembic upgrade head</code>)</li>
+      </ul>
+      <h4>What makes a migration "risky"?</h4>
+      <ul>
+        <li><strong>Adding a non-nullable column without a default:</strong> The DB must scan the entire table to add the column. For large tables, this locks the table (no reads/writes) for minutes or hours.</li>
+        <li><strong>Renaming a column:</strong> Old code still references the old name → application errors during deploy.</li>
+        <li><strong>Data transformations:</strong> Converting types, splitting columns — can corrupt data if wrong.</li>
+        <li><strong>Dropping a column:</strong> If deployed before code stops referencing it, queries fail.</li>
+      </ul>
+      <h4>Safe migration strategy (multi-step deploy):</h4>
+      <ol>
+        <li>Add new nullable column (or new column with default).</li>
+        <li>Deploy code that writes to both old and new columns.</li>
+        <li>Backfill data in new column.</li>
+        <li>Deploy code that reads from new column only.</li>
+        <li>Drop old column.</li>
+      </ol>
+    </div>
+  `;
+
+  const practice = renderFlashcards([
+    {
+      q: 'How do you protect a FastAPI endpoint with JWT authentication?',
+      a: `<p>1. Define <code>oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")</code>. <br>
+          2. Create a dependency <code>get_current_user(token = Depends(oauth2_scheme))</code> that decodes the JWT using <code>jose.jwt.decode()</code>. <br>
+          3. If decoding fails, raise <code>HTTPException(status_code=401)</code>. <br>
+          4. Add <code>Depends(get_current_user)</code> to any protected route.</p>
+          <p>FastAPI automatically extracts the token from the <code>Authorization: Bearer &lt;token&gt;</code> header.</p>`
+    },
+    {
+      q: 'What is the N+1 query problem and how do you solve it in Django ORM?',
+      a: `<p><strong>Problem:</strong> When you iterate over a queryset and access a related object on each item, Django fires one SQL query per item (N queries) plus the initial query (1). For 1000 orders, that's 1001 queries.</p>
+          <p><strong>Solutions:</strong></p>
+          <ul>
+            <li><code>select_related('user')</code> — for ForeignKey/OneToOne: does a SQL JOIN, 1 query total.</li>
+            <li><code>prefetch_related('tags')</code> — for ManyToMany/reverse FK: 2 queries (one per model), joined in Python.</li>
+          </ul>`
+    },
+    {
+      q: 'When would you use <code>select_related</code> vs <code>prefetch_related</code> in Django?',
+      a: `<p><strong>select_related:</strong> Use for ForeignKey or OneToOneField relationships. Generates a SQL JOIN. Returns data in a single query. More efficient when you're accessing a single related object per row.</p>
+          <p><strong>prefetch_related:</strong> Use for ManyToManyField or reverse ForeignKey (when one object has many related objects). Does 2 separate queries and joins in Python. Avoids the Cartesian product problem of JOINs with many-to-many.</p>`
+    },
+    {
+      q: 'What is a "risky migration" in production? Give an example and how to handle it safely.',
+      a: `<p><strong>Example:</strong> Adding a non-nullable column <code>phone_number VARCHAR(20) NOT NULL</code> to a Users table with 10 million rows.</p>
+          <p><strong>Why risky:</strong> PostgreSQL must lock the table to add the column and apply constraints. During that lock, no reads or writes can proceed — minutes of downtime.</p>
+          <p><strong>Safe approach:</strong> 1) Add as nullable first (<code>NULL</code> allowed). 2) Backfill existing rows. 3) Add NOT NULL constraint after all rows have values. 4) In Postgres 11+, this can be done with <code>ADD COLUMN ... DEFAULT ...</code> which is instant for most cases.</p>`
+    },
+    {
+      q: 'How does FastAPI\'s Pydantic validation work? What happens when validation fails?',
+      a: `<p>You define a class that inherits from <code>BaseModel</code> with type-annotated fields. When a request comes in, FastAPI automatically validates the request body/query params against the Pydantic model.</p>
+          <p>If validation fails (wrong type, missing required field, failed validator), FastAPI returns a <strong>422 Unprocessable Entity</strong> response automatically — you don't need to write any validation code yourself. The response includes a detailed error message showing exactly which field failed and why.</p>`
+    },
+  ], 'frameworks');
+
+  const simulate = renderMock([
+    {
+      q: "Which ORM have you used in production? How do you identify and solve an N+1 query problem?",
+      a: `<p>"I've used both Django ORM and SQLAlchemy. To identify N+1: I look at Django Debug Toolbar in dev — if I see duplicate queries in a loop, that's N+1. In prod I use query logging or APM tools like Datadog. Fix: <code>select_related</code> for ForeignKey (one SQL JOIN), <code>prefetch_related</code> for M2M (two queries, Python join). I also use <code>QuerySet.explain()</code> to check query plans."</p>`
+    },
+    {
+      q: "How do you handle database migrations in a production environment? What's a risky migration?",
+      a: `<p>"I use Django migrations with a strict process: migrations are in version control, reviewed before merging, and run as a separate step before deploying app code (never during). A risky migration is one that holds locks — like adding a NOT NULL column to a large table. For those, I use a multi-step deploy: add nullable, backfill, then add constraint. For Postgres specifically, I leverage <code>ADD COLUMN ... DEFAULT</code> which is instant in PG11+."</p>`
+    },
+  ]);
+
+  document.getElementById('content').innerHTML = `
+    <h1 class="section-title">Web Frameworks &amp; ORM</h1>
+    <p class="section-sub">14 minutes in the interview. Deep knowledge of your chosen framework matters.</p>
+    <div id="fw-tabs">${renderTabs([{label:'Learn',content:learn},{label:'Practice',content:practice},{label:'Simulate',content:simulate}], 'fw')}</div>
+  `;
+}
+
+// ─── PAGE: TESTING ────────────────────────────────────────────────────────
+function renderTesting() {
+  const learn = `
+    <div class="card">
+      <h3>Unit Tests vs Integration Tests <span class="tag tag-core">Fundamental</span></h3>
+      <p><strong>Unit test:</strong> Tests a single function or class in <em>complete isolation</em>. All external dependencies (database, HTTP calls, file I/O) are mocked. Tests only the logic inside the unit.</p>
+      <p><strong>Integration test:</strong> Tests the full flow — calling an API endpoint and hitting a real (test) database. Verifies that components work together correctly.</p>
+      <table class="score-table">
+        <tr><th></th><th>Unit Test</th><th>Integration Test</th></tr>
+        <tr><td>Scope</td><td>Single function/class</td><td>Full request → DB → response</td></tr>
+        <tr><td>Speed</td><td>Very fast (ms)</td><td>Slower (real DB)</td></tr>
+        <tr><td>Isolation</td><td>Complete — everything mocked</td><td>Real services</td></tr>
+        <tr><td>What it catches</td><td>Logic bugs</td><td>Integration bugs, SQL errors</td></tr>
+      </table>
+      <h4>Example — unit test (mock the DB):</h4>
+<pre><span class="cm"># Service function being tested</span>
+<span class="kw">def</span> <span class="fn">get_user_count</span>(db):
+    <span class="kw">return</span> db.query(User).count()
+
+<span class="cm"># Unit test — mock the db</span>
+<span class="kw">def</span> <span class="fn">test_get_user_count</span>(mocker):
+    mock_db = mocker.MagicMock()
+    mock_db.query.return_value.count.return_value = <span class="num">42</span>
+    result = <span class="fn">get_user_count</span>(mock_db)
+    <span class="kw">assert</span> result == <span class="num">42</span></pre>
+    </div>
+
+    <div class="card">
+      <h3>pytest-mock: The <code>mocker</code> Fixture <span class="tag tag-core">pytest-mock</span></h3>
+      <p><code>pytest-mock</code> provides the <code>mocker</code> fixture which wraps <code>unittest.mock</code>. The mock is automatically torn down after each test.</p>
+<pre><span class="kw">import</span> pytest
+
+<span class="cm"># Function under test</span>
+<span class="kw">import</span> requests
+<span class="kw">def</span> <span class="fn">fetch_user_data</span>(user_id):
+    response = requests.get(<span class="st">f"https://api.example.com/users/{user_id}"</span>)
+    <span class="kw">return</span> response.json()
+
+<span class="cm"># Test — mock the requests.get call</span>
+<span class="kw">def</span> <span class="fn">test_fetch_user_data</span>(mocker):
+    mock_response = mocker.MagicMock()
+    mock_response.json.return_value = {<span class="st">"id"</span>: <span class="num">1</span>, <span class="st">"name"</span>: <span class="st">"Alice"</span>}
+
+    <span class="cm"># Patch the function in the module where it's used</span>
+    mocker.patch(<span class="st">"mymodule.requests.get"</span>, return_value=mock_response)
+
+    result = <span class="fn">fetch_user_data</span>(<span class="num">1</span>)
+    <span class="kw">assert</span> result[<span class="st">"name"</span>] == <span class="st">"Alice"</span></pre>
+      <h4>Common mocker methods:</h4>
+      <ul>
+        <li><code>mocker.patch("module.ClassName.method")</code> — patches a method</li>
+        <li><code>mocker.patch.object(obj, 'method')</code> — patches a method on an instance</li>
+        <li><code>mock.return_value = x</code> — sets what the mock returns when called</li>
+        <li><code>mock.side_effect = Exception("error")</code> — makes the mock raise an exception</li>
+        <li><code>mock.assert_called_once_with(arg)</code> — verifies how the mock was called</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>unittest.mock: <code>@patch</code> Decorator <span class="tag tag-core">unittest.mock</span></h3>
+<pre><span class="kw">from</span> unittest.mock <span class="kw">import</span> patch, MagicMock
+
+<span class="kw">def</span> <span class="fn">send_welcome_email</span>(user_email):
+    <span class="kw">import</span> sendgrid
+    client = sendgrid.SendGridAPIClient()
+    <span class="cm"># ... sends email</span>
+
+<span class="cm"># Patch as decorator — mock is injected as argument</span>
+<span class="kw">@</span>patch(<span class="st">"mymodule.sendgrid.SendGridAPIClient"</span>)
+<span class="kw">def</span> <span class="fn">test_send_welcome_email</span>(mock_sendgrid):
+    mock_client = MagicMock()
+    mock_sendgrid.return_value = mock_client
+
+    <span class="fn">send_welcome_email</span>(<span class="st">"alice@example.com"</span>)
+
+    mock_client.send.assert_called_once()
+
+<span class="cm"># Or as context manager:</span>
+<span class="kw">def</span> <span class="fn">test_send_welcome_email_ctx</span>():
+    <span class="kw">with</span> patch(<span class="st">"mymodule.sendgrid.SendGridAPIClient"</span>) <span class="kw">as</span> mock_sg:
+        mock_sg.return_value.send.return_value = {<span class="st">"status"</span>: <span class="num">202</span>}
+        <span class="fn">send_welcome_email</span>(<span class="st">"alice@example.com"</span>)</pre>
+    </div>
+
+    <div class="card">
+      <h3>What to Mock (and What Not to) <span class="tag tag-tip">Best Practice</span></h3>
+      <p><strong>Mock the service client/wrapper, not the low-level transport library.</strong></p>
+      <ul>
+        <li>✅ Mock <code>sendgrid.SendGridAPIClient</code> (the service abstraction)</li>
+        <li>❌ Don't mock <code>requests.post</code> (the low-level HTTP library) — that's testing the wrong boundary</li>
+        <li>✅ Mock <code>boto3.client('s3')</code> (the AWS client)</li>
+        <li>✅ Mock <code>db.query(User)</code> in unit tests (the DB access layer)</li>
+      </ul>
+      <div class="callout callout-blue"><strong>Key rule:</strong> Mock at the boundary of your system — the point where your code calls external services. Mock the interface your code uses, not the internals of the library.</div>
+    </div>
+  `;
+
+  const practice = renderFlashcards([
+    {
+      q: 'What is the difference between a unit test and an integration test in a backend service context?',
+      a: `<p><strong>Unit test:</strong> Tests a single function or class by mocking all external dependencies (database, HTTP calls, external APIs). Tests only the logic inside that unit. Very fast.</p>
+          <p><strong>Integration test:</strong> Tests the full request/response flow — hits a real (test) database, calls the actual API endpoint. Verifies components work together. Slower but catches integration bugs (wrong SQL, serialization mismatches, auth middleware issues).</p>
+          <p>In practice: write many unit tests for business logic, write integration tests for critical API paths.</p>`
+    },
+    {
+      q: 'How do you mock a database call in pytest using pytest-mock?',
+      a: `<pre><span class="kw">def</span> <span class="fn">test_get_user</span>(mocker):
+    <span class="cm"># Mock the db.query().filter().first() chain</span>
+    mock_user = mocker.MagicMock()
+    mock_user.name = <span class="st">"Alice"</span>
+
+    mock_query = mocker.MagicMock()
+    mock_query.filter.return_value.first.return_value = mock_user
+
+    mocker.patch.object(db_session, <span class="st">'query'</span>, return_value=mock_query)
+
+    result = <span class="fn">get_user_by_id</span>(db_session, <span class="num">1</span>)
+    <span class="kw">assert</span> result.name == <span class="st">"Alice"</span></pre>`
+    },
+    {
+      q: 'When should you use <code>@patch</code> vs <code>mocker.patch</code>?',
+      a: `<p><strong>mocker.patch</strong> (pytest-mock): Preferred for pytest projects. The mock is automatically cleaned up after each test. No teardown needed. Uses the <code>mocker</code> fixture.</p>
+          <p><strong>@patch</strong> (unittest.mock): Standard library, works with both pytest and unittest. The patched target is injected as an argument to the test function. Slightly more verbose for multiple patches.</p>
+          <p>Rule of thumb: if you're using pytest, use <code>mocker.patch</code>. It's cleaner and automatic cleanup prevents test pollution.</p>`
+    },
+  ], 'testing');
+
+  const simulate = renderMock([
+    {
+      q: "What's your approach to testing a backend service? What's the difference between a unit test and an integration test?",
+      a: `<p>"I write tests at two levels. Unit tests: isolate a service function completely by mocking the database and any external calls. These run in milliseconds and test business logic. Integration tests: spin up a test database (SQLite or test PostgreSQL container), call the actual API endpoint, check the response. These catch SQL errors, serialization bugs, and middleware issues that unit tests miss. For ratio: I write more unit tests for coverage breadth and a smaller set of integration tests for critical paths."</p>`
+    },
+    {
+      q: "How do you mock external service calls in your tests?",
+      a: `<p>"I use pytest-mock's mocker fixture. The key is patching at the right level — I mock the service client (e.g., <code>boto3.client('s3')</code> or <code>SendGridAPIClient</code>), not the underlying transport library. That way I test my code's interaction with the service interface, not the library internals. I also use <code>mock.assert_called_once_with()</code> to verify my code calls the external service with the right arguments."</p>`
+    },
+  ]);
+
+  document.getElementById('content').innerHTML = `
+    <h1 class="section-title">Testing</h1>
+    <p class="section-sub">8 minutes in the interview. A clear testing philosophy separates senior engineers from mid-level.</p>
+    <div id="test-tabs">${renderTabs([{label:'Learn',content:learn},{label:'Practice',content:practice},{label:'Simulate',content:simulate}], 'test')}</div>
+  `;
+}
+
+// ─── PAGE: PALINDROME ─────────────────────────────────────────────────────
+function renderPalindrome() {
+  const learn = `
+    <div class="card">
+      <h3>The Problem <span class="tag tag-core">60-Minute Challenge</span></h3>
+      <p>Write a function that finds the <strong>three largest palindromes</strong> embedded in a given string, returned sorted by length in descending order.</p>
+      <p>A palindrome reads the same forwards and backwards (e.g., "MOM", "RACECAR", "LEVEL").</p>
+<pre>input_str = <span class="st">"abcMOMdefRACECARghiLEVELjkl"</span>
+expected = [<span class="st">"RACECAR"</span>, <span class="st">"LEVEL"</span>, <span class="st">"MOM"</span>]</pre>
+      <div class="callout callout-red"><strong>Critical:</strong> Read the test cases first. Before writing a single line of code, understand what the tests check. This is exactly what Cyngn evaluates.</div>
+    </div>
+
+    <div class="card">
+      <h3>Clarifying Questions You MUST Ask <span class="tag tag-tip">Ask These First</span></h3>
+      <p>Strong candidates ask at least 3-4 of these before coding. Asking shows systematic thinking.</p>
+      <table class="score-table">
+        <tr><th>Question</th><th>Answer</th><th>Signal</th></tr>
+        <tr><td>Are single characters considered palindromes?</td><td>Palindromes of length 3 or more.</td><td>Shows awareness of trivial cases</td></tr>
+        <tr><td>Is the comparison case-sensitive?</td><td>Yes, case-sensitive. 'Mom' ≠ 'MOM'.</td><td>Avoids silent bugs</td></tr>
+        <tr><td>Can palindromes overlap in the string?</td><td>Yes, they can.</td><td>Strong — indicates substring complexity awareness</td></tr>
+        <tr><td>What if there are fewer than 3 palindromes?</td><td>Return as many as you find, up to 3.</td><td>Handles boundary conditions</td></tr>
+        <tr><td>What does "largest" mean?</td><td>By character length.</td><td>Confirms sorting criteria</td></tr>
+        <tr><td>What about duplicate palindromes?</td><td>Show them as separate ones.</td><td>Strong — avoids redundant output</td></tr>
+        <tr><td>Is the input always a single continuous string?</td><td>Yes, may include spaces/numbers.</td><td>Confirms input format</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>Approach A: Expand Around Center — O(n²) <span class="tag tag-tip">Preferred</span></h3>
+      <p>For every character in the string, treat it as a potential palindrome center and expand outward as long as characters match.</p>
+      <p><strong>Key insight:</strong> Palindromes have two shapes: odd-length (single center: "RACECAR") and even-length (two-character center: "ABBA"). You need two expansion passes per index.</p>
+<pre><span class="kw">def</span> <span class="fn">find_palindromes</span>(input_str):
+    found = <span class="fn">set</span>()
+    n = <span class="fn">len</span>(input_str)
+
+    <span class="kw">for</span> center <span class="kw">in</span> <span class="fn">range</span>(n):
+        <span class="cm"># Odd-length palindromes (single center character)</span>
+        left, right = center, center
+        <span class="kw">while</span> left >= <span class="num">0</span> <span class="kw">and</span> right < n <span class="kw">and</span> input_str[left] == input_str[right]:
+            <span class="kw">if</span> right - left + <span class="num">1</span> >= <span class="num">3</span>:
+                found.add(input_str[left:right + <span class="num">1</span>])
+            left -= <span class="num">1</span>
+            right += <span class="num">1</span>
+
+        <span class="cm"># Even-length palindromes (two-character center)</span>
+        left, right = center, center + <span class="num">1</span>
+        <span class="kw">while</span> left >= <span class="num">0</span> <span class="kw">and</span> right < n <span class="kw">and</span> input_str[left] == input_str[right]:
+            <span class="kw">if</span> right - left + <span class="num">1</span> >= <span class="num">3</span>:
+                found.add(input_str[left:right + <span class="num">1</span>])
+            left -= <span class="num">1</span>
+            right += <span class="num">1</span>
+
+    sorted_palindromes = <span class="fn">sorted</span>(found, key=<span class="fn">len</span>, reverse=<span class="kw">True</span>)
+    <span class="kw">return</span> sorted_palindromes[:<span class="num">3</span>]</pre>
+      <h4>Why O(n²)?</h4>
+      <p>For each of n centers, we expand up to n/2 times → O(n) per center → O(n²) total. Much better than brute force's O(n³).</p>
+    </div>
+
+    <div class="card">
+      <h3>Approach B: Brute Force — O(n³) <span class="tag tag-core">Acceptable First Pass</span></h3>
+      <p>Generate all possible substrings of length ≥ 3, check each if it's a palindrome, collect uniques, sort, return top 3.</p>
+<pre><span class="kw">def</span> <span class="fn">find_palindromes_brute</span>(input_str):
+    n = <span class="fn">len</span>(input_str)
+    found = <span class="fn">set</span>()
+
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(n):
+        <span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(i + <span class="num">3</span>, n + <span class="num">1</span>):  <span class="cm"># min length 3</span>
+            substr = input_str[i:j]
+            <span class="kw">if</span> substr == substr[::-<span class="num">1</span>]:  <span class="cm"># palindrome check: O(n)</span>
+                found.add(substr)
+
+    <span class="kw">return</span> <span class="fn">sorted</span>(found, key=<span class="fn">len</span>, reverse=<span class="kw">True</span>)[:<span class="num">3</span>]
+
+<span class="cm"># Why O(n³): O(n²) substrings × O(n) palindrome check = O(n³)</span></pre>
+      <p>This is acceptable as a first working solution. <strong>But you must recognize it's O(n³)</strong> and explain why the expand-around-center is better.</p>
+    </div>
+
+    <div class="card">
+      <h3>Key Python Techniques Used <span class="tag tag-core">Python Fluency</span></h3>
+      <ul>
+        <li><strong>Palindrome check:</strong> <code>s == s[::-1]</code> — string slice with step -1 reverses the string.</li>
+        <li><strong>Deduplication:</strong> Use a <code>set()</code> — automatically removes duplicates when you <code>add()</code>.</li>
+        <li><strong>Sort by length descending:</strong> <code>sorted(found, key=len, reverse=True)</code></li>
+        <li><strong>Return top 3:</strong> <code>[:3]</code> — safe even if list has fewer than 3 elements.</li>
+        <li><strong>Even-length expansion starts:</strong> <code>left, right = center, center + 1</code></li>
+        <li><strong>Odd-length expansion starts:</strong> <code>left, right = center, center</code></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>Edge Cases to Handle <span class="tag tag-warn">Don't Forget</span></h3>
+      <ul>
+        <li><strong>Empty string:</strong> <code>n = 0</code>, the for loop doesn't execute, returns <code>[]</code>. ✅ Already handled.</li>
+        <li><strong>Fewer than 3 palindromes:</strong> <code>sorted(...)[:3]</code> safely returns what's available. ✅ Already handled.</li>
+        <li><strong>Overlapping palindromes:</strong> Expand-around-center naturally handles these since we start fresh at each center.</li>
+        <li><strong>Duplicates:</strong> Using a <code>set()</code> deduplicates automatically.</li>
+        <li><strong>Case sensitivity:</strong> Keep it case-sensitive by default unless specified otherwise. "MOM" and "mom" are different.</li>
+        <li><strong>Min length = 3:</strong> The check <code>if right - left + 1 >= 3</code> enforces this.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>The Evaluation Rubric <span class="tag tag-core">Scoring</span></h3>
+      <table class="score-table">
+        <tr><th>Criterion</th><th>Score 5</th></tr>
+        <tr><td>Problem Clarification</td><td>Asks 3+ targeted questions, articulates plan before coding</td></tr>
+        <tr><td>Algorithmic Approach</td><td>Implements Expand Around Center O(n²), explains complexity</td></tr>
+        <tr><td>Python Fluency</td><td>Clean idiomatic code: sorted(key=len), set(), slicing</td></tr>
+        <tr><td>Edge Case Handling</td><td>Proactively handles overlapping, duplicates, fewer than 3</td></tr>
+        <tr><td>Communication</td><td>Narrates throughout, explains tradeoffs unprompted</td></tr>
+      </table>
+    </div>
+  `;
+
+  const practice = renderFlashcards([
+    {
+      q: 'Before coding the palindrome problem, what 5 clarifying questions should you ask?',
+      a: `<ol>
+            <li>What is the minimum palindrome length? (Answer: 3+)</li>
+            <li>Is the comparison case-sensitive? (Answer: Yes)</li>
+            <li>Can palindromes overlap in the string? (Answer: Yes)</li>
+            <li>What if there are fewer than 3 palindromes? (Answer: Return as many as you find)</li>
+            <li>How do we handle duplicate palindromes? (Answer: Show as separate results)</li>
+          </ol>`
+    },
+    {
+      q: 'Why is Expand Around Center O(n²) while Brute Force is O(n³)?',
+      a: `<p><strong>Brute Force O(n³):</strong> Generate all O(n²) substrings. For each, check if it's a palindrome in O(n) → O(n²) × O(n) = O(n³).</p>
+          <p><strong>Expand Around Center O(n²):</strong> For each of n centers, expand outward while characters match. Each center expands at most n/2 times. Total expansions across all centers = O(n). Each expansion is O(1). Total = O(n²).</p>`
+    },
+    {
+      q: 'Explain the difference between expanding for odd-length vs even-length palindromes.',
+      a: `<p><strong>Odd-length</strong> (e.g., "RACECAR" has 7 chars, center at index 3 = 'E'):<br>Start with <code>left = center, right = center</code>. The center character matches itself. Expand outward.</p>
+          <p><strong>Even-length</strong> (e.g., "ABBA" has 4 chars, center between indices 1 and 2):<br>Start with <code>left = center, right = center + 1</code>. Check if the two center characters match. If yes, expand outward.</p>
+          <p>You need both loops — one starting at the same index, one starting with adjacent indices.</p>`
+    },
+    {
+      q: 'How do you write a Python palindrome check? What is its time complexity?',
+      a: `<pre><span class="cm"># Method 1: string reversal O(n)</span>
+<span class="kw">def</span> <span class="fn">is_palindrome</span>(s):
+    <span class="kw">return</span> s == s[::-<span class="num">1</span>]
+
+<span class="cm"># Method 2: two pointers O(n) but in-place</span>
+<span class="kw">def</span> <span class="fn">is_palindrome</span>(s):
+    left, right = <span class="num">0</span>, <span class="fn">len</span>(s) - <span class="num">1</span>
+    <span class="kw">while</span> left < right:
+        <span class="kw">if</span> s[left] != s[right]:
+            <span class="kw">return False</span>
+        left += <span class="num">1</span>; right -= <span class="num">1</span>
+    <span class="kw">return True</span></pre>
+          <p>Both are O(n). Method 1 uses O(n) extra space for the reversed string. Method 2 is O(1) space.</p>`
+    },
+  ], 'palindrome');
+
+  const simulate = renderMock([
+    {
+      q: "Here's the problem: Find the 3 largest palindromes in a string. Before you start — what questions do you have?",
+      a: `<p>Ask: (1) Minimum length — I'll assume 3+? (2) Case-sensitive? (3) Can palindromes overlap? (4) Fewer than 3? (5) Duplicates? Then say: "My approach is to use expand-around-center. For each character, I'll expand outward checking both odd and even length palindromes. I'll collect results in a set to deduplicate, then sort by length descending and return the top 3. Complexity: O(n²). Want me to start?"</p>`
+    },
+    {
+      q: "Your test is failing. I see you passed 1 of 8 test cases. How do you debug this?",
+      a: `<p>Stop and say: "Let me read the failing test cases first to understand what they're checking." Read each test. Identify the pattern they expose. Then trace through your code manually for one failing case. Don't just try random fixes — systematically identify what specific input breaks your algorithm and why.</p>`
+    },
+  ]);
+
+  document.getElementById('content').innerHTML = `
+    <h1 class="section-title">Live Coding: Palindrome Finder</h1>
+    <p class="section-sub">60 minutes · Python · Coderbyte · The biggest failure mode is not reading test cases first.</p>
+    <div id="pal-tabs">${renderTabs([{label:'Learn',content:learn},{label:'Practice',content:practice},{label:'Simulate',content:simulate}], 'pal')}</div>
+  `;
+}
+
+// ─── PAGE: SYSTEMS DESIGN ─────────────────────────────────────────────────
+function renderSysdesign() {
+  const learn = `
+    <div class="card">
+      <h3>The Problem: Real-Time Notification System <span class="tag tag-core">60-Minute Design</span></h3>
+      <p>Design a real-time, scalable notification system for a large e-commerce platform that:</p>
+      <ul>
+        <li>Supports multiple notification types (order updates, price drops, inventory alerts)</li>
+        <li>Delivers through multiple channels (email, push notifications, SMS)</li>
+        <li>Scales to millions of users</li>
+        <li>Remains reliable and timely during traffic spikes (Black Friday)</li>
+      </ul>
+      <div class="callout callout-blue">There is no single correct solution. Cyngn evaluates <em>how</em> you think: do you clarify requirements, reason about tradeoffs, and communicate like a system owner?</div>
+    </div>
+
+    <div class="card">
+      <h3>Section 1: Requirements Clarification (7 min · 10 pts) <span class="tag tag-tip">Ask First</span></h3>
+      <p><strong>Always ask these before drawing any architecture:</strong></p>
+      <table class="score-table">
+        <tr><th>Question to Ask</th><th>Answer You'll Get</th><th>Why It Matters</th></tr>
+        <tr><td>"How real-time does this need to be?"</td><td>Low seconds acceptable (not hard real-time)</td><td>Determines if you need WebSockets or async queues</td></tr>
+        <tr><td>"What's the expected scale?"</td><td>Millions of users; 100k+ notif/sec at peak</td><td>Determines partitioning, number of workers</td></tr>
+        <tr><td>"Are all notifications equally important?"</td><td>No — order status critical, price drops best-effort</td><td>Justifies priority queues</td></tr>
+        <tr><td>"Is this a global system?"</td><td>Yes, global users</td><td>Requires multi-region, time zone handling</td></tr>
+        <tr><td>"Should failed notifications retry?"</td><td>Yes (controlled retries)</td><td>DLQ design, exponential backoff</td></tr>
+      </table>
+      <div class="callout callout-green"><strong>Exceptional signal:</strong> Don't just ask — explain how each answer changes your design. "If it's hard real-time, I'd use WebSockets. Since it's low-seconds acceptable, async queues with workers work better at scale."</div>
+    </div>
+
+    <div class="card">
+      <h3>Section 2: High-Level Architecture (8 min · 15 pts) <span class="tag tag-core">Draw This</span></h3>
+      <p><strong>Components and their responsibilities:</strong></p>
+      <ol>
+        <li><strong>API Gateway / Notification Ingestion Service</strong> — receives events from upstream services (order service, pricing service). Validates and routes to the message broker.</li>
+        <li><strong>Message Broker (Kafka)</strong> — durable, high-throughput queue. Topics per notification type. Decouples producers from consumers.</li>
+        <li><strong>User Preference Service</strong> — stores per-user channel preferences (email opt-in, push enabled, SMS phone number).</li>
+        <li><strong>Notification Workers</strong> — separate workers per channel (EmailWorker, PushWorker, SMSWorker). Pull from Kafka, check user preferences, send via third-party provider.</li>
+        <li><strong>Third-Party Providers</strong> — SendGrid (email), Firebase FCM (push), Twilio (SMS).</li>
+        <li><strong>Notification DB</strong> — stores delivery history and status per notification.</li>
+        <li><strong>Dead Letter Queue (DLQ)</strong> — failed notifications go here for inspection/retry.</li>
+      </ol>
+<pre>Order Service ──→ Kafka (notifications topic)
+                      ↓
+               ┌──────────────┐
+               │ EmailWorker  │──→ SendGrid
+               │ PushWorker   │──→ Firebase FCM
+               │ SMSWorker    │──→ Twilio
+               └──────────────┘
+                      ↓
+               Notification DB + DLQ</pre>
+    </div>
+
+    <div class="card">
+      <h3>Section 3: Event-Driven Design (10 min · 20 pts) <span class="tag tag-core">Kafka Deep Dive</span></h3>
+      <h4>Why Kafka over RabbitMQ?</h4>
+      <ul>
+        <li><strong>Kafka:</strong> Log-based, messages persist to disk. Consumers can replay from any offset. High throughput (millions of messages/sec). Horizontal scaling via partitions. Better for event sourcing and audit trails.</li>
+        <li><strong>RabbitMQ:</strong> Messages deleted after consumption. Better for simple task queues with complex routing (exchanges, bindings). Easier for exactly-once delivery. Better for lower throughput with complex routing rules.</li>
+        <li><strong>For this system:</strong> Kafka because we need replay (for debugging), high throughput at Black Friday scale, and the ability to have multiple independent consumer groups (analytics, notifications, audit).</li>
+      </ul>
+      <h4>Topic design:</h4>
+<pre>notifications.order-status     <span class="cm">← high priority</span>
+notifications.price-drops      <span class="cm">← low priority</span>
+notifications.inventory-alerts <span class="cm">← medium priority</span></pre>
+      <h4>Delivery semantics — the tradeoff:</h4>
+      <ul>
+        <li><strong>At-most-once:</strong> May lose messages. Not acceptable for critical notifications.</li>
+        <li><strong>At-least-once:</strong> May send duplicates. Acceptable if consumers are idempotent. This is what Kafka provides by default.</li>
+        <li><strong>Exactly-once:</strong> Complex, requires Kafka transactions + idempotent producers. High overhead. Only needed for financial notifications.</li>
+      </ul>
+      <div class="callout callout-blue"><strong>Answer:</strong> Use at-least-once + idempotent consumers. Store a <code>notification_id</code> in the DB; before sending, check if already sent. This is simpler than exactly-once and achieves the same user-visible result.</div>
+    </div>
+
+    <div class="card">
+      <h3>Section 4: Scalability &amp; Performance (10 min · 20 pts) <span class="tag tag-core">Black Friday</span></h3>
+      <h4>Fan-out problem:</h4>
+      <p>When 1 million users have a watched item go on sale, you need to send 1 million notifications. A single "price drop" event must fan out to millions of personalized messages.</p>
+      <p><strong>Solution:</strong> The price-drop event gets published once to Kafka. A Fan-out Worker reads it, queries user preferences in batches, and publishes N individual notification events back to Kafka. Workers then process those.</p>
+      <h4>Backpressure:</h4>
+      <p>When consumers can't keep up with the producer rate, the queue grows. Solutions:</p>
+      <ul>
+        <li>Scale out consumers horizontally (add more worker pods).</li>
+        <li>Implement backpressure signals — producers slow down if the Kafka lag is too high.</li>
+        <li>Prioritize critical notifications over best-effort.</li>
+      </ul>
+      <h4>Load shedding (graceful degradation):</h4>
+      <p>During extreme peaks, best-effort notifications (price drops) can be delayed or dropped while critical ones (order confirmations) are always delivered. Achieved via separate Kafka topics with separate consumer pools.</p>
+      <h4>Rate limiting (external providers):</h4>
+      <p>SendGrid limits emails per second. Solution: token bucket rate limiter in the EmailWorker, exponential backoff on 429 responses, and spreading sends over time when not time-critical.</p>
+    </div>
+
+    <div class="card">
+      <h3>Section 5: Reliability &amp; Fault Tolerance (7 min · 15 pts) <span class="tag tag-core">What Fails</span></h3>
+      <h4>Dead Letter Queue (DLQ):</h4>
+      <p>A DLQ is a separate queue where messages go when they've failed to process after a maximum number of retries. It prevents one bad message from blocking the entire queue. Engineers can inspect DLQ messages, fix the underlying issue, and requeue them.</p>
+      <h4>Idempotency:</h4>
+      <p>Critical because at-least-once delivery means a notification might be sent twice (worker crashes mid-send). Solution:</p>
+      <ol>
+        <li>Each notification event has a unique <code>notification_id</code>.</li>
+        <li>Before sending, the worker checks: "Has <code>notification_id=X</code> already been sent successfully?" (DB lookup)</li>
+        <li>If yes: skip. If no: send and mark as sent atomically.</li>
+      </ol>
+      <h4>Retry strategy:</h4>
+<pre>Attempt 1: immediate
+Attempt 2: 1 second
+Attempt 3: 2 seconds
+Attempt 4: 4 seconds
+Attempt 5: DLQ</pre>
+      <h4>Isolation:</h4>
+      <p>If the SMS provider is down, it must not affect email or push. Each channel has its own worker pool and its own Kafka consumer group. Failures in one channel don't cascade to others.</p>
+    </div>
+
+    <div class="card">
+      <h3>Section 6: Data Storage &amp; Modeling (6 min · 10 pts) <span class="tag tag-core">What Goes Where</span></h3>
+      <table class="score-table">
+        <tr><th>Data</th><th>Storage</th><th>Why</th></tr>
+        <tr><td>User preferences (email opt-in, phone)</td><td>PostgreSQL</td><td>Strong consistency, relational, low write rate</td></tr>
+        <tr><td>Notification delivery history</td><td>DynamoDB / Cassandra</td><td>High write throughput, time-series access pattern, partition by user_id</td></tr>
+        <tr><td>Notification status (in-flight state)</td><td>Redis</td><td>Fast reads for idempotency check, TTL for cleanup</td></tr>
+        <tr><td>Audit logs</td><td>S3 + Athena</td><td>Cheap, durable, queryable for compliance</td></tr>
+      </table>
+      <div class="callout callout-yellow"><strong>Consistency trade-off:</strong> Notification history doesn't need strong consistency (eventual is fine). Duplicate sends are prevented by the idempotency check in Redis, not by DB transactions.</div>
+    </div>
+
+    <div class="card">
+      <h3>Section 7: Monitoring &amp; Observability (4 min · 5 pts) <span class="tag tag-core">SLIs &amp; SLOs</span></h3>
+      <h4>SLIs (Service Level Indicators) — what you measure:</h4>
+      <ul>
+        <li><strong>Delivery success rate:</strong> % of notifications delivered successfully</li>
+        <li><strong>End-to-end latency:</strong> Time from event to user receiving notification (p50, p95, p99)</li>
+        <li><strong>Queue backlog size:</strong> How far behind are consumers? Growing backlog = scaling event needed</li>
+        <li><strong>DLQ size:</strong> Spike = systemic delivery failure</li>
+      </ul>
+      <h4>SLOs (targets):</h4>
+      <ul>
+        <li>Critical notifications: 99.9% delivered, &lt;5 seconds latency</li>
+        <li>Best-effort notifications: 95% delivered, &lt;60 seconds latency</li>
+      </ul>
+      <h4>Distributed tracing:</h4>
+      <p>Attach a <code>trace_id</code> to each notification event at ingestion. Propagate it through every service (Kafka header → worker → provider call). When a notification is reported as not received, you can trace the entire lifecycle in Datadog or Jaeger.</p>
+    </div>
+
+    <div class="card">
+      <h3>Section 8: Security &amp; Privacy (4 min · 5 pts) <span class="tag tag-core">PII &amp; Auth</span></h3>
+      <h4>PII (Personally Identifiable Information):</h4>
+      <p>Notification content contains user emails, phone numbers, and behavioral data (what items they viewed). This is PII and requires:</p>
+      <ul>
+        <li><strong>Encryption at rest:</strong> Database-level encryption for notification DB and preferences.</li>
+        <li><strong>Encryption in transit:</strong> TLS 1.2+ for all service-to-service communication and provider API calls.</li>
+        <li><strong>Access control:</strong> RBAC — only the notification service can read user contact data.</li>
+        <li><strong>Data minimization:</strong> Don't store notification content longer than needed. TTL on delivery records.</li>
+      </ul>
+      <h4>Privacy-by-design:</h4>
+      <p>Only collect what's needed. Don't log notification content in plaintext. Honor unsubscribe preferences immediately (don't wait for cache expiry).</p>
+      <h4>Service-to-service auth:</h4>
+      <p>Mutual TLS (mTLS) between microservices, or IAM roles in AWS. Never static API keys shared across services.</p>
+    </div>
+
+    <div class="card">
+      <h3>Section 9: Advanced Considerations (4 min · 15 pts) <span class="tag tag-core">Edge Cases</span></h3>
+      <h4>Out-of-order events:</h4>
+      <p>If event A ("order placed") and event B ("order shipped") arrive out of order, the user could receive "shipped" before "placed". Solution: Attach a <code>sequence_number</code> or <code>timestamp</code> to events. Workers deduplicate and reorder before sending, using a small time-window buffer.</p>
+      <h4>Time zones for scheduled notifications:</h4>
+      <p>Don't send push notifications at 3am local time. Store user timezone in preferences. Schedule sends in user's local time. Use UTC internally, convert to local time at the worker level before scheduling.</p>
+      <h4>Exactly-once vs at-least-once:</h4>
+      <p><strong>Exactly-once</strong> requires distributed transactions — Kafka transactions + idempotent producers. Very complex, adds latency, expensive. Best for financial or legally binding notifications.</p>
+      <p><strong>At-least-once + idempotent consumers</strong> (recommended): Accept potential duplicate messages, but prevent duplicate visible effects via notification_id check. 99% of use cases can use this pattern.</p>
+      <h4>Multi-region:</h4>
+      <p>For global users, deploy workers in multiple AWS regions. Route users to their nearest region for low latency. Kafka uses cross-region replication for durability. Consider data residency requirements (GDPR — EU user data stays in EU).</p>
+    </div>
+  `;
+
+  const practice = renderFlashcards([
+    {
+      q: 'What 5 questions do you ask before designing the notification system? Why does each matter?',
+      a: `<ol>
+            <li><strong>"How real-time?"</strong> → Determines WebSockets vs async queues. Low seconds = queues are fine.</li>
+            <li><strong>"What scale?"</strong> → 100k notif/sec peak → need Kafka with horizontal partitioning, not a simple DB table.</li>
+            <li><strong>"Are all notifications equally critical?"</strong> → No → justifies separate priority queues, load shedding.</li>
+            <li><strong>"Is this global?"</strong> → Yes → multi-region, time zones, GDPR data residency.</li>
+            <li><strong>"Should failures retry?"</strong> → Yes → need DLQ, exponential backoff, idempotency.</li>
+          </ol>`
+    },
+    {
+      q: 'What is a Dead Letter Queue (DLQ)? When does a message go there?',
+      a: `<p>A DLQ is a separate queue for messages that have failed to process after a maximum retry limit. When a notification worker fails to deliver (provider is down, malformed message, persistent error), it retries with exponential backoff. After N retries (e.g., 5), the message is moved to the DLQ instead of being lost or blocking the main queue.</p>
+          <p>Engineers can inspect the DLQ, diagnose the issue, and requeue messages once fixed. Without a DLQ, one bad message can halt processing of all subsequent messages.</p>`
+    },
+    {
+      q: 'Why is idempotency important in this system? How do you implement it?',
+      a: `<p><strong>Why:</strong> Kafka provides at-least-once delivery — if a worker crashes mid-send, the message will be reprocessed and the notification could be sent twice to the user.</p>
+          <p><strong>Implementation:</strong></p>
+          <ol>
+            <li>Each notification event has a unique <code>notification_id</code> (UUID).</li>
+            <li>Before sending, the worker checks Redis/DB: "Has notification_id=X been delivered successfully?"</li>
+            <li>If yes: skip (idempotent — no duplicate send).</li>
+            <li>If no: send, then mark as delivered atomically.</li>
+          </ol>`
+    },
+    {
+      q: 'Why choose Kafka over RabbitMQ for this notification system?',
+      a: `<p><strong>Choose Kafka because:</strong></p>
+          <ul>
+            <li>Messages are persisted to disk — you can replay them (useful for debugging, re-sending failed notifications).</li>
+            <li>Multiple independent consumer groups can read the same events (notifications workers + analytics + audit log — all read the same Kafka topic independently).</li>
+            <li>Handles 100k+ messages/sec easily with horizontal partitioning.</li>
+            <li>Partitioning by user_id ensures order-related notifications for one user arrive in order.</li>
+          </ul>
+          <p><strong>Tradeoff:</strong> Kafka has more operational complexity. On AWS using MSK (managed Kafka), this is mostly mitigated.</p>`
+    },
+    {
+      q: 'What is the fan-out problem and how do you solve it for a "price drop" notification to 1 million users?',
+      a: `<p><strong>Problem:</strong> One price-drop event must trigger 1 million individual notifications. If you process this synchronously, you block for a very long time.</p>
+          <p><strong>Solution:</strong></p>
+          <ol>
+            <li>The pricing service publishes one event: <code>{"type": "price_drop", "item_id": 123, "new_price": 9.99}</code></li>
+            <li>A <strong>Fan-out Worker</strong> reads it, queries which users have this item wishlisted (in batches of 1000).</li>
+            <li>Fan-out Worker publishes N individual <code>notification_required</code> events back to Kafka.</li>
+            <li>Channel workers (email, push, SMS) pick these up and send asynchronously.</li>
+          </ol>
+          <p>This keeps the fan-out async and horizontally scalable — add more fan-out workers during peak.</p>`
+    },
+    {
+      q: 'What SLIs and SLOs would you define for this notification system?',
+      a: `<p><strong>SLIs (what to measure):</strong></p>
+          <ul>
+            <li>Delivery success rate (# delivered / # attempted)</li>
+            <li>End-to-end latency (p50, p95, p99 from event ingestion to delivery confirmation)</li>
+            <li>Kafka consumer lag (how far behind are workers?)</li>
+            <li>DLQ message count (spike = systemic failure)</li>
+          </ul>
+          <p><strong>SLOs (targets):</strong></p>
+          <ul>
+            <li>Order status notifications: 99.9% delivered within 5 seconds</li>
+            <li>Price drop notifications: 95% delivered within 60 seconds (best-effort)</li>
+          </ul>
+          <p><strong>Alerting:</strong> Page on call when: DLQ size > 100 in 5 min, consumer lag growing for 10 min, delivery success rate drops below SLO.</p>`
+    },
+  ], 'sd');
+
+  const simulate = renderMock([
+    {
+      q: "Design a real-time scalable notification system for a large e-commerce platform. Feel free to ask clarifying questions first.",
+      a: `<p><strong>Step 1 — Questions:</strong> "Before I start: How real-time does it need to be? What's peak scale? Are all notifications equally important? Global system? Should failures retry?"</p>
+          <p><strong>Step 2 — Summarize constraints:</strong> "Based on your answers: low-seconds latency is OK, 100k/sec peak, mixed criticality, global, retries needed. This tells me I should use an async event-driven architecture with Kafka, priority queues, and DLQs."</p>
+          <p><strong>Step 3 — Draw components:</strong> "Event sources → API Gateway → Kafka (topics per notification type) → Channel Workers (email/push/SMS) → third-party providers. DLQ for failed messages. User Preference Service to check if user wants the notification. Notification DB for history."</p>`
+    },
+    {
+      q: "How does this system behave on Black Friday — an order-of-magnitude traffic increase?",
+      a: `<p>"Three things: First, the fan-out workers and channel workers scale horizontally — add more pods, each with its own Kafka consumer in the same consumer group. Second, I separate critical notifications (order status) into their own Kafka topic with dedicated workers that are never preempted. Third, best-effort notifications (price drops) are in a lower-priority topic. If workers are overloaded, I implement load shedding — delay or sample price drop notifications. Rate limiting per external provider (SendGrid caps emails/sec) is handled by a token bucket in the worker."</p>`
+    },
+    {
+      q: "What happens when things fail?",
+      a: `<p>"Three layers: Retry with exponential backoff (1s, 2s, 4s, 5 attempts). After max retries, move to DLQ for inspection. Idempotency prevents duplicates on retry — each notification has a unique ID, worker checks if it was already delivered before sending. Isolation — SMS, email, and push have separate worker pools; one provider going down doesn't affect the others. For the DLQ, we alert on it and have runbooks for manual requeue."</p>`
+    },
+  ]);
+
+  document.getElementById('content').innerHTML = `
+    <h1 class="section-title">Systems Design: Notification System</h1>
+    <p class="section-sub">60 minutes · FAANG-level bar · 9 sections · 125 points</p>
+    <div id="sd-tabs">${renderTabs([{label:'Learn',content:learn},{label:'Practice',content:practice},{label:'Simulate',content:simulate}], 'sd')}</div>
+  `;
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────
+navigate('home');
+</script>
+</body>
+</html>
